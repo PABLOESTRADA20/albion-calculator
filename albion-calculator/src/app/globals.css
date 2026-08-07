@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+:root {
+  --color-bg: #0e1013;
+  --color-panel: #14171c;
+  --color-panel-raised: #1b1f26;
+  --color-border: #262b33;
+  --color-gold: #caa75d;
+  --color-gold-dim: #8a7240;
+  --color-text: #e8e6e0;
+  --color-text-dim: #9aa0a8;
+  --color-profit: #7ab86a;
+  --color-loss: #e06c60;
+}
+
+@theme inline {
+  --color-bg: var(--color-bg);
+  --color-panel: var(--color-panel);
+  --color-panel-raised: var(--color-panel-raised);
+  --color-border: var(--color-border);
+  --color-gold: var(--color-gold);
+  --color-gold-dim: var(--color-gold-dim);
+  --color-text: var(--color-text);
+  --color-text-dim: var(--color-text-dim);
+  --color-profit: var(--color-profit);
+  --color-loss: var(--color-loss);
+  --font-display: var(--font-plex-sans);
+  --font-sans: var(--font-plex-sans);
+  --font-mono: var(--font-plex-mono);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* Numeros tabulares para que las columnas de precios cuadren visualmente */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Titulo con degradado dorado sutil */
+.text-gradient-gold {
+  background: linear-gradient(
+    180deg,
+    var(--color-text) 0%,
+    var(--color-gold) 60%,
+    var(--color-gold-dim) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
