@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Libro de Mercader
 
-## Getting Started
+Inteligencia económica para **Albion Online**: compara precios entre ciudades,
+calcula ganancias de crafteo, refinado y _flipping_, y encuentra la mejor
+oportunidad disponible.
 
-First, run the development server:
+## Requisitos
+
+- Node.js 20+
+- pnpm (proyecto configurado con pnpm workspaces)
+
+## Puesta en marcha
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Módulos
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Pestaña     | Qué hace                                                        |
+| ----------- | --------------------------------------------------------------- |
+| Inicio      | Acceso a los módulos y panel de alertas de precio               |
+| Mercado     | Comprar / Vender (dónde y a cuánto), Scanner de oportunidades, ficha de item con historial y alertas |
+| Builds      | Biblioteca de builds PvP/PvE y coste de equipamiento optimizado por ciudad |
+| Crafteo     | Beneficio fabricando items y ranking de recetas                  |
+| Refinado    | Beneficio refinando recursos y ranking con bonus de ciudad       |
+| Flipping    | Compra y venta de órdenes del mercado                           |
 
-## Learn More
+Los precios se obtienen de la API pública de
+[Albion Online Data](https://www.albion-online-data.com/) (`albion-online-data.com`),
+con selector de servidor (Europe/West) y posibilidad de introducir precios
+manualmente.
 
-To learn more about Next.js, take a look at the following resources:
+## Comandos
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+pnpm lint            # ESLint
+pnpm build           # Next.js build (incluye type check de TS)
+pnpm exec tsc --noEmit   # Type check independiente (no hay script "typecheck")
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Estructura
 
-## Deploy on Vercel
+- `src/lib/` — lógica de negocio (precios, mercado, cálculos, historial, alertas)
+- `src/data/` — dataset de items y builds
+- `src/components/` — UI de cada módulo
+- `src/types/albion.ts` — tipos base (ciudades, servidores, calidades, proveedores)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Ver `ARCHITECTURE.md`, `MARKET_SYSTEM.md` y `BUILDS.md` para el detalle.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Dataset
+
+- `src/data/items.ts` — 16 554 items de Albion (id, nombre EN, nombre ES),
+  incluidas variantes con encantamiento (`@1`…`@4`).
+- `src/data/builds/` — builds PvP (12) y PvE (12) con sus 8 slots.
+
+## Scripts de validación
+
+Durante el desarrollo se usaron scripts en Node para validar builds y
+oportunidades contra la API real (los resultados quedan documentados en el
+historial del proyecto, no se incluyen en el repositorio).

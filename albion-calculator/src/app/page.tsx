@@ -5,29 +5,91 @@ import { DirectionAwareTabs } from "@/components/DirectionAwareTabs";
 import { GridBeam } from "@/components/GridBeam";
 import { ServerSelector } from "@/components/ServerSelector";
 import { PriceSourceToggle } from "@/components/PriceSourceToggle";
-import { CraftingCalculator } from "@/components/calculators/CraftingCalculator";
-import { RefiningCalculator } from "@/components/calculators/RefiningCalculator";
-import { FlippingCalculator } from "@/components/calculators/FlippingCalculator";
+import { MarketSection } from "@/components/market/MarketSection";
+import { AlertsPanel } from "@/components/market/AlertsPanel";
+import { CraftingSection } from "@/components/calculators/CraftingSection";
+import { RefiningSection } from "@/components/calculators/RefiningSection";
+import { FlippingSection } from "@/components/calculators/FlippingSection";
+import { BuildsSection } from "@/components/builds/BuildsSection";
 import { ApiPriceProvider } from "@/lib/pricing/apiPriceProvider";
 import { ManualPriceProvider } from "@/lib/pricing/manualPriceProvider";
+import { ApiHistoryProvider } from "@/lib/history/historyProvider";
 import type { PriceProvider, ServerId } from "@/types/albion";
+
+function Dashboard({
+  provider,
+  onNavigate,
+}: {
+  provider: PriceProvider;
+  onNavigate: (section: string) => void;
+}) {
+  const modules: { id: string; title: string; desc: string }[] = [
+    { id: "market", title: "Mercado", desc: "Dónde comprar y vender cada item" },
+    { id: "builds", title: "Builds", desc: "Biblioteca PvP/PvE y coste de equipamiento" },
+    { id: "crafting", title: "Crafteo", desc: "Beneficio fabricando items" },
+    { id: "refining", title: "Refinado", desc: "Beneficio refinando recursos" },
+    { id: "flipping", title: "Flipping", desc: "Compra y venta de órdenes" },
+  ];
+  return (
+    <div className="space-y-5">
+      <div className="grid gap-3 sm:grid-cols-2">
+        {modules.map((m) => (
+          <button
+            key={m.id}
+            onClick={() => onNavigate(m.id)}
+            className="group rounded-lg border border-[var(--color-border)] bg-[var(--color-panel)] p-4 text-left transition-colors hover:border-[var(--color-gold-dim)]"
+          >
+            <p className="text-sm font-semibold text-[var(--color-text)] group-hover:text-[var(--color-gold)]">
+              {m.title}
+            </p>
+            <p className="mt-1 text-xs text-[var(--color-text-dim)]">{m.desc}</p>
+          </button>
+        ))}
+      </div>
+      <AlertsPanel provider={provider} />
+    </div>
+  );
+}
 
 export default function Home() {
   const [serverId, setServerId] = useState<ServerId>("europe");
   const [priceSource, setPriceSource] = useState<"api" | "manual">("api");
+  const [section, setSection] = useState("dashboard");
 
   const provider: PriceProvider = useMemo(() => {
     if (priceSource === "manual") return new ManualPriceProvider();
     return new ApiPriceProvider(serverId);
   }, [priceSource, serverId]);
 
-  const tabs = useMemo(
+  const historyProvider = useMemo(
+    () => new ApiHistoryProvider(serverId),
+    [serverId]
+  );
+
+  const sections = useMemo(
     () => [
-      { id: "crafting", label: "Crafteo", content: <CraftingCalculator provider={provider} /> },
-      { id: "refining", label: "Refinado", content: <RefiningCalculator provider={provider} /> },
-      { id: "flipping", label: "Flipping", content: <FlippingCalculator provider={provider} /> },
+      {
+        id: "dashboard",
+        label: "Inicio",
+        content: <Dashboard provider={provider} onNavigate={setSection} />,
+      },
+      {
+        id: "market",
+        label: "Mercado",
+        content: (
+          <MarketSection provider={provider} historyProvider={historyProvider} />
+        ),
+      },
+      {
+        id: "builds",
+        label: "Builds",
+        content: <BuildsSection provider={provider} />,
+      },
+      { id: "crafting", label: "Crafteo", content: <CraftingSection provider={provider} /> },
+      { id: "refining", label: "Refinado", content: <RefiningSection provider={provider} /> },
+      { id: "flipping", label: "Flipping", content: <FlippingSection provider={provider} /> },
     ],
-    [provider]
+    [provider, historyProvider]
   );
 
   return (
@@ -43,9 +105,9 @@ export default function Home() {
             Libro de Mercader
           </h1>
           <p className="mt-2 max-w-xl text-sm text-[var(--color-text-dim)]">
-            Compara la ganancia de craftear, refinar y hacer flipping en Albion
-            Online. Elige servidor y fuente de precios, abre la pestaña que
-            quieras y expande «Cómo usar».
+            Inteligencia económica para Albion Online: compara precios entre
+            ciudades, calcula ganancias de crafteo, refinado y flipping, y
+            encuentra la mejor oportunidad disponible.
           </p>
           <div className="mt-5 flex flex-wrap items-center gap-3">
             <ServerSelector value={serverId} onChange={setServerId} />
@@ -54,7 +116,11 @@ export default function Home() {
         </header>
       </GridBeam>
 
-      <DirectionAwareTabs tabs={tabs} />
+      <DirectionAwareTabs
+        tabs={sections}
+        activeId={section}
+        onActiveChange={setSection}
+      />
     </main>
   );
 }

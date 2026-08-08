@@ -10,6 +10,7 @@ import { SERVERS } from "@/types/albion";
 const PRICES_PATH = "/api/v2/stats/prices";
 const CACHE_TTL_MS = 60_000;
 const MAX_RETRIES = 2;
+const CHUNK_SIZE = 60;
 
 interface RawPriceEntry {
   item_id: string;
@@ -66,34 +67,46 @@ export class ApiPriceProvider implements PriceProvider {
     if (itemIds.length === 0 || cities.length === 0) return [];
 
     const apiBase = SERVERS.find((s) => s.id === this.serverId)!.apiBase;
-    const itemsParam = itemIds.join(",");
-    const url = `${apiBase}${PRICES_PATH}/${itemsParam}?locations=${encodeURIComponent(
-      cities.join(",")
-    )}&qualities=${quality}`;
 
-    const cached = cache.get(url);
-    if (cached && cached.expires > Date.now()) return cached.promise;
+    // El endpoint acepta listas largas de items, pero las URLs gigantes
+    // pueden rechazarse; se consulta por lotes de CHUNK_SIZE.
+    const all: MarketPrice[] = [];
+    for (let i = 0; i < itemIds.length; i += CHUNK_SIZE) {
+      const chunk = itemIds.slice(i, i + CHUNK_SIZE);
+      const itemsParam = chunk.join(",");
+      const url = `${apiBase}${PRICES_PATH}/${itemsParam}?locations=${encodeURIComponent(
+        cities.join(",")
+      )}&qualities=${quality}`;
 
-    const promise = (async () => {
-      const raw = await fetchWithRetry(url);
-      return raw.map((entry) => ({
-        itemId: entry.item_id,
-        city: entry.city as City,
-        quality: entry.quality as Quality,
-        sellPriceMin: entry.sell_price_min,
-        buyPriceMax: entry.buy_price_max,
-        updatedAt: entry.sell_price_min_date || null,
-      }));
-    })();
+      const cached = cache.get(url);
+      const promise =
+        cached && cached.expires > Date.now()
+          ? cached.promise
+          : (async () => {
+              const raw = await fetchWithRetry(url);
+              return raw.map((entry) => ({
+                itemId: entry.item_id,
+                city: entry.city as City,
+                quality: entry.quality as Quality,
+                sellPriceMin: entry.sell_price_min,
+                buyPriceMax: entry.buy_price_max,
+                updatedAt: entry.sell_price_min_date || null,
+              }));
+            })();
 
-    cache.set(url, { expires: Date.now() + CACHE_TTL_MS, promise });
-    try {
-      return await promise;
-    } catch (err) {
-      cache.delete(url);
-      throw err;
-    } finally {
-      pruneCache();
+      if (!cached || cached.expires <= Date.now()) {
+        cache.set(url, { expires: Date.now() + CACHE_TTL_MS, promise });
+      }
+
+      try {
+        all.push(...(await promise));
+      } catch (err) {
+        cache.delete(url);
+        throw err;
+      }
     }
+
+    pruneCache();
+    return all;
   }
 }

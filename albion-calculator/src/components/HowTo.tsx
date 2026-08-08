@@ -3,16 +3,17 @@
 import type { ReactNode } from "react";
 
 interface HowToProps {
+  title?: string;
   steps: ReactNode[];
   notes?: ReactNode[];
 }
 
 // Bloque colapsable de ayuda por calculadora (details nativo: sin estado).
-export function HowTo({ steps, notes }: HowToProps) {
+export function HowTo({ title = "Cómo usar", steps, notes }: HowToProps) {
   return (
     <details className="group rounded-md border border-[var(--color-border)] bg-[var(--color-panel-raised)]">
       <summary className="flex cursor-pointer select-none items-center justify-between px-3 py-2 text-sm text-[var(--color-text-dim)] transition-colors hover:text-[var(--color-text)]">
-        Cómo usar
+        {title}
         <span className="text-xs transition-transform group-open:rotate-90">
           ▸
         </span>

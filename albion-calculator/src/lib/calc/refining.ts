@@ -78,6 +78,8 @@ export interface RefineIngredient {
 export interface RefineRecipe {
   outputItemId: string;
   ingredients: RefineIngredient[];
+  tier: number;
+  enchant: number;
 }
 
 function itemId(tier: number, prefix: string, suffix = ""): string {
@@ -116,6 +118,8 @@ export function refineRecipe(
   return {
     outputItemId: itemId(tier, group.refinedPrefix, suffix),
     ingredients,
+    tier,
+    enchant,
   };
 }
 

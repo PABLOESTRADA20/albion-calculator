@@ -14,25 +14,32 @@ export interface DirectionTab {
 interface DirectionAwareTabsProps {
   tabs: DirectionTab[];
   className?: string;
+  /** Modo controlado: el padre decide la pestaña activa. */
+  activeId?: string;
+  onActiveChange?: (id: string) => void;
 }
 
 export function DirectionAwareTabs({
   tabs,
   className = "",
+  activeId,
+  onActiveChange,
 }: DirectionAwareTabsProps) {
-  const [activeId, setActiveId] = useState(tabs[0]?.id ?? "");
+  const [internalActiveId, setInternalActiveId] = useState(tabs[0]?.id ?? "");
   const [direction, setDirection] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [ref, bounds] = useMeasure<HTMLDivElement>();
 
-  const active = tabs.find((t) => t.id === activeId) ?? null;
+  const resolvedActiveId = activeId ?? internalActiveId;
+  const active = tabs.find((t) => t.id === resolvedActiveId) ?? null;
 
   const handleClick = (id: string) => {
-    if (id === activeId || isAnimating) return;
-    const from = tabs.findIndex((t) => t.id === activeId);
+    if (id === resolvedActiveId || isAnimating) return;
+    const from = tabs.findIndex((t) => t.id === resolvedActiveId);
     const to = tabs.findIndex((t) => t.id === id);
     setDirection(to > from ? 1 : -1);
-    setActiveId(id);
+    setInternalActiveId(id);
+    onActiveChange?.(id);
   };
 
   const variants = {
@@ -52,7 +59,7 @@ export function DirectionAwareTabs({
   const tabButtons = useMemo(
     () =>
       tabs.map((tab) => {
-        const isActive = tab.id === activeId;
+        const isActive = tab.id === resolvedActiveId;
         return (
           <button
             key={tab.id}
@@ -77,7 +84,7 @@ export function DirectionAwareTabs({
         );
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [tabs, activeId]
+    [tabs, resolvedActiveId]
   );
 
   return (
@@ -98,7 +105,7 @@ export function DirectionAwareTabs({
               onExitComplete={() => setIsAnimating(false)}
             >
               <motion.div
-                key={activeId}
+                key={resolvedActiveId}
                 variants={variants}
                 initial="initial"
                 animate="active"
