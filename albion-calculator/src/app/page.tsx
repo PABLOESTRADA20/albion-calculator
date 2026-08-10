@@ -11,6 +11,7 @@ import { CraftingSection } from "@/components/calculators/CraftingSection";
 import { RefiningSection } from "@/components/calculators/RefiningSection";
 import { FlippingSection } from "@/components/calculators/FlippingSection";
 import { BuildsSection } from "@/components/builds/BuildsSection";
+import { AvalonSection } from "@/components/avalon/AvalonSection";
 import { ApiPriceProvider } from "@/lib/pricing/apiPriceProvider";
 import { ManualPriceProvider } from "@/lib/pricing/manualPriceProvider";
 import { ApiHistoryProvider } from "@/lib/history/historyProvider";
@@ -29,6 +30,7 @@ function Dashboard({
     { id: "crafting", title: "Crafteo", desc: "Beneficio fabricando items" },
     { id: "refining", title: "Refinado", desc: "Beneficio refinando recursos" },
     { id: "flipping", title: "Flipping", desc: "Compra y venta de órdenes" },
+    { id: "avalon", title: "Roads of Avalon", desc: "Builds, mapas, rutas y riesgo del contenido de Roads" },
   ];
   return (
     <div className="space-y-5">
@@ -88,6 +90,11 @@ export default function Home() {
       { id: "crafting", label: "Crafteo", content: <CraftingSection provider={provider} /> },
       { id: "refining", label: "Refinado", content: <RefiningSection provider={provider} /> },
       { id: "flipping", label: "Flipping", content: <FlippingSection provider={provider} /> },
+      {
+        id: "avalon",
+        label: "Roads de Avalon",
+        content: <AvalonSection provider={provider} />,
+      },
     ],
     [provider, historyProvider]
   );
