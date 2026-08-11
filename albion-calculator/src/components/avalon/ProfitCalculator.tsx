@@ -175,6 +175,11 @@ export function ProfitCalculator() {
             <Stat label="Beneficio neto" value={fmt(result.net)} highlight={result.net >= 0} />
             <Stat label="Por jugador" value={fmt(result.perPlayer)} />
             <Stat label="Por hora (neto)" value={fmt(result.perHour)} />
+            <Stat
+              label="Neto tras comprar gear"
+              value={fmt(result.netAfterBuy)}
+              highlight={result.netAfterBuy >= 0}
+            />
           </div>
         </div>
         <p className="text-[10px] uppercase tracking-wide text-[var(--color-text-dim)]">

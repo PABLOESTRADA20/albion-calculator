@@ -48,7 +48,7 @@ export function estimateAvalonRun(input: RunEstimateInput): RunEstimate {
   const net = gross - expenses;
   const perPlayer = input.players > 0 ? Math.round(net / input.players) : 0;
   const perHour = input.durationMin > 0 ? Math.round((net * 60) / input.durationMin) : 0;
-  const netAfterBuy = net - (input.players > 0 ? buildCost : 0) * (input.players > 1 ? 1 : 1) - (input.players > 1 ? 0 : input.mountCost);
+  const netAfterBuy = net - buildCost - (input.players === 1 ? input.mountCost : 0);
 
   const score = avalonRiskScore({
     tier: input.tier,

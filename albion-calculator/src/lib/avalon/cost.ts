@@ -165,7 +165,9 @@ export function useBuildCost(
 
   const summary = (() => {
     if (prices.length === 0) return null;
-    return buildPurchaseSummary(items, prices, cities);
+    // Los specs ya resueltos (tier/enchant seleccionados, pociones a T4)
+    // son los que coinciden con los itemIds consultados.
+    return buildPurchaseSummary(resolvedItems, prices, cities);
   })();
 
   return {
