@@ -1,11 +1,19 @@
+// Punto de re-export de las builds de Roads of Avalon.
+//
+// El BUILD SYSTEM vive en src/data/builds/* (y en src/components/builds/*).
+// Este fichero existe para que las importaciones historicas de "@/data/avalon"
+// sigan funcionando sin duplicar datos: la fuente unica es src/data/builds.
+
 import type { AvalonActivity, AvalonBuildKind, Build } from "@/lib/builds/types";
-import { AVALON_SOLO_BUILDS } from "@/data/avalon/solo";
-import { AVALON_ALLROUNDER_BUILDS } from "@/data/avalon/solo";
-import { AVALON_HEALER_BUILDS } from "@/data/avalon/roles";
-import { AVALON_TANK_BUILDS } from "@/data/avalon/roles";
-import { AVALON_DPS_BUILDS } from "@/data/avalon/dps";
-import { AVALON_SUPPORT_BUILDS } from "@/data/avalon/dps";
-import { AVALON_ESCAPE_BUILDS } from "@/data/avalon/escape";
+import { AVALON_SOLO_BUILDS, AVALON_ALLROUNDER_BUILDS } from "@/data/builds/avalon-solo";
+import { AVALON_HEALER_BUILDS, AVALON_TANK_BUILDS } from "@/data/builds/avalon-roles";
+import { AVALON_DPS_BUILDS, AVALON_SUPPORT_BUILDS } from "@/data/builds/avalon-dps";
+import { AVALON_ESCAPE_BUILDS } from "@/data/builds/avalon-escape";
+
+export { AVALON_SOLO_BUILDS, AVALON_ALLROUNDER_BUILDS };
+export { AVALON_HEALER_BUILDS, AVALON_TANK_BUILDS };
+export { AVALON_DPS_BUILDS, AVALON_SUPPORT_BUILDS };
+export { AVALON_ESCAPE_BUILDS };
 
 export const AVALON_BUILDS: Build[] = [
   ...AVALON_SOLO_BUILDS,

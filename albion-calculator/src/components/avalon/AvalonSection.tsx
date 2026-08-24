@@ -5,38 +5,26 @@ import { DirectionAwareTabs } from "@/components/DirectionAwareTabs";
 import type { DirectionTab } from "@/components/DirectionAwareTabs";
 import type { PriceProvider } from "@/types/albion";
 import { AvalonOverview } from "@/components/avalon/AvalonOverview";
-import { AvalonBuildsSection } from "@/components/avalon/AvalonBuildsSection";
-import { CompositionSection } from "@/components/avalon/CompositionSection";
 import { MapsExplorer } from "@/components/avalon/MapsExplorer";
 import { RoutePlanner } from "@/components/avalon/RoutePlanner";
 import { RiskCalculator } from "@/components/avalon/RiskCalculator";
 import { ProfitCalculator } from "@/components/avalon/ProfitCalculator";
 import { GatheringOptimizer } from "@/components/avalon/GatheringOptimizer";
 import { LootOptimizer } from "@/components/avalon/LootOptimizer";
-import { BuildCompare } from "@/components/avalon/BuildCompare";
-import { BuildRecommender } from "@/components/avalon/BuildRecommender";
 
 interface AvalonSectionProps {
   provider: PriceProvider;
+  /** Navega a la seccion global de Builds (opcionalmente filtrada por familia de arma). */
+  onOpenBuilds: (weaponFamily?: string) => void;
 }
 
-export function AvalonSection({ provider }: AvalonSectionProps) {
+export function AvalonSection({ provider, onOpenBuilds }: AvalonSectionProps) {
   const tabs = useMemo<DirectionTab[]>(
     () => [
       {
         id: "resumen",
         label: "Resumen",
-        content: <AvalonOverview provider={provider} />,
-      },
-      {
-        id: "builds",
-        label: "Builds",
-        content: <AvalonBuildsSection provider={provider} />,
-      },
-      {
-        id: "composiciones",
-        label: "Composiciones",
-        content: <CompositionSection provider={provider} />,
+        content: <AvalonOverview onOpenBuilds={onOpenBuilds} />,
       },
       {
         id: "mapas",
@@ -46,27 +34,15 @@ export function AvalonSection({ provider }: AvalonSectionProps) {
       {
         id: "rutas",
         label: "Route Planner",
-        content: <RoutePlanner provider={provider} />,
+        content: <RoutePlanner onOpenBuilds={onOpenBuilds} />,
       },
       {
         id: "calculadoras",
         label: "Calculadoras",
-        content: (
-          <CalculatorsTabs provider={provider} />
-        ),
-      },
-      {
-        id: "comparar",
-        label: "Comparar",
-        content: <BuildCompare provider={provider} />,
-      },
-      {
-        id: "recomendador",
-        label: "Recomendador",
-        content: <BuildRecommender provider={provider} />,
+        content: <CalculatorsTabs provider={provider} />,
       },
     ],
-    [provider]
+    [provider, onOpenBuilds]
   );
 
   return <DirectionAwareTabs tabs={tabs} />;

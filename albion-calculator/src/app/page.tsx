@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { DirectionAwareTabs } from "@/components/DirectionAwareTabs";
 import { GridBeam } from "@/components/GridBeam";
 import { ServerSelector } from "@/components/ServerSelector";
@@ -12,6 +12,7 @@ import { RefiningSection } from "@/components/calculators/RefiningSection";
 import { FlippingSection } from "@/components/calculators/FlippingSection";
 import { BuildsSection } from "@/components/builds/BuildsSection";
 import { AvalonSection } from "@/components/avalon/AvalonSection";
+import { PvpSection } from "@/components/pvp/PvpSection";
 import { ApiPriceProvider } from "@/lib/pricing/apiPriceProvider";
 import { ManualPriceProvider } from "@/lib/pricing/manualPriceProvider";
 import { ApiHistoryProvider } from "@/lib/history/historyProvider";
@@ -31,6 +32,11 @@ function Dashboard({
     { id: "refining", title: "Refinado", desc: "Beneficio refinando recursos" },
     { id: "flipping", title: "Flipping", desc: "Compra y venta de órdenes" },
     { id: "avalon", title: "Roads of Avalon", desc: "Builds, mapas, rutas y riesgo del contenido de Roads" },
+    {
+      id: "pvp",
+      title: "PvP Analytics",
+      desc: "Players, matchups, counters, meta, fight history, rankings y live feed",
+    },
   ];
   return (
     <div className="space-y-5">
@@ -57,6 +63,7 @@ export default function Home() {
   const [serverId, setServerId] = useState<ServerId>("europe");
   const [priceSource, setPriceSource] = useState<"api" | "manual">("api");
   const [section, setSection] = useState("dashboard");
+  const [buildsWeaponFamily, setBuildsWeaponFamily] = useState<string | undefined>(undefined);
 
   const provider: PriceProvider = useMemo(() => {
     if (priceSource === "manual") return new ManualPriceProvider();
@@ -66,6 +73,14 @@ export default function Home() {
   const historyProvider = useMemo(
     () => new ApiHistoryProvider(serverId),
     [serverId]
+  );
+
+  const openBuilds = useCallback(
+    (weaponFamily?: string) => {
+      setBuildsWeaponFamily(weaponFamily);
+      setSection("builds");
+    },
+    []
   );
 
   const sections = useMemo(
@@ -85,7 +100,13 @@ export default function Home() {
       {
         id: "builds",
         label: "Builds",
-        content: <BuildsSection provider={provider} />,
+        content: (
+          <BuildsSection
+            provider={provider}
+            weaponFamily={buildsWeaponFamily}
+            onClearWeaponFilter={() => setBuildsWeaponFamily(undefined)}
+          />
+        ),
       },
       { id: "crafting", label: "Crafteo", content: <CraftingSection provider={provider} /> },
       { id: "refining", label: "Refinado", content: <RefiningSection provider={provider} /> },
@@ -93,10 +114,15 @@ export default function Home() {
       {
         id: "avalon",
         label: "Roads de Avalon",
-        content: <AvalonSection provider={provider} />,
+        content: <AvalonSection provider={provider} onOpenBuilds={openBuilds} />,
+      },
+      {
+        id: "pvp",
+        label: "PvP Analytics",
+        content: <PvpSection serverId={serverId} marketProvider={provider} onOpenBuilds={openBuilds} />,
       },
     ],
-    [provider, historyProvider]
+    [provider, historyProvider, buildsWeaponFamily, openBuilds, serverId]
   );
 
   return (

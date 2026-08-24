@@ -5,7 +5,7 @@ import { recommendAvalonBuilds } from "@/lib/avalon/recommender";
 import { AVALON_ACTIVITIES, ACTIVITY_LABELS, BUILD_ROLES, ROLE_LABELS } from "@/lib/builds/types";
 import type { AvalonActivity, BuildRole } from "@/lib/builds/types";
 import type { PriceProvider } from "@/types/albion";
-import { AvalonBuildCard } from "@/components/avalon/AvalonBuildCard";
+import { AvalonBuildCard } from "@/components/builds/AvalonBuildCard";
 
 interface BuildRecommenderProps {
   provider: PriceProvider;

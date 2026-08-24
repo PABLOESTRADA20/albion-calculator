@@ -13,13 +13,27 @@ src/data/items.ts            Dataset de items (id, nombre EN/ES)
 src/lib/pricing/             Proveedores de precios
 src/lib/market/              Lógica de mercado (finders, scanner, universo)
 src/lib/builds/              Tipos e items de builds
-src/data/builds/             Definiciones de builds (pvp.ts, pve.ts)
+src/data/builds/             Definiciones de builds (pvp.ts, pve.ts, avalon-*.ts)
+src/lib/pvp/                 Proveedor de datos PvP (gameinfo) + motor de
+                             analítica (matchups, meta, counters) + hooks
 src/lib/calc/                Cálculos de crafteo/refinado/fees/return rate
 src/lib/history/             Proveedor de historial de precios + hook
 src/lib/alerts.ts            Alertas persistentes en localStorage
-src/components/              UI por módulo (market/, builds/, calculators/)
+src/components/              UI por módulo (market/, builds/, calculators/,
+                             avalon/, pvp/)
 src/app/page.tsx             Composición de secciones + cabecera
 ```
+
+## Capa PvP (`src/lib/pvp/`)
+
+`PvPDataProvider` (`types.ts`) es el contrato que consume la UI; la única
+implementación es `GameInfoPvpProvider` (`gameinfo.ts`, API oficial
+`gameinfo-ams/ash.albiononline.com/api/gameinfo`). Capa de datos
+`analytics.ts` es un motor puro (matchups, meta, counters, tendencias,
+slots) sobre eventos reales; nunca inventa win rates ni datos históricos.
+Los hooks (`usePvp.ts`) usan el patrón firma/completado. Los flujos
+PvP → Builds → Mercado se conectan vía `onOpenBuilds`/`PriceProvider`.
+Detalle completo en `PVP_ANALYTICS.md`.
 
 ## Proveedores de precios
 
@@ -41,6 +55,8 @@ todos los parámetros de la petición y `loading = completedSignature !== signat
 > de efectos debe usar el patrón firma/completado (setState solo dentro de
 > callbacks asíncronos). `react-hooks/preserve-manual-memoization` prohíbe
 > encadenar `useMemo` consumido por otro cálculo: usar IIFE en su lugar.
+> `react-hooks/refs` prohíbe leer/escribir `ref.current` durante el render
+> (se hace dentro de efectos o handlers).
 
 ## Historial de precios
 

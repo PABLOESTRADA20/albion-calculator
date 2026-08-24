@@ -10,7 +10,7 @@ import { AVALON_KIND_LABELS } from "@/lib/builds/types";
 import { itemName } from "@/lib/builds/items";
 import type { PriceProvider } from "@/types/albion";
 import { ItemIcon } from "@/components/ItemIcon";
-import { BuildCostPanel } from "@/components/avalon/BuildCostPanel";
+import { BuildCostPanel } from "@/components/builds/BuildCostPanel";
 
 interface AvalonBuildCardProps {
   provider: PriceProvider;

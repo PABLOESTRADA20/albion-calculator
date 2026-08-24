@@ -7,7 +7,7 @@ import { buildItemId } from "@/lib/builds/types";
 import { itemName } from "@/lib/builds/items";
 import type { PriceProvider } from "@/types/albion";
 import { ItemIcon } from "@/components/ItemIcon";
-import { BuildCostPanel } from "@/components/avalon/BuildCostPanel";
+import { BuildCostPanel } from "@/components/builds/BuildCostPanel";
 import { ACTIVITY_LABELS, AVALON_KIND_LABELS, DIFFICULTY_LABELS, ROLE_LABELS } from "@/lib/builds/types";
 
 interface BuildCompareProps {

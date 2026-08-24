@@ -1,7 +1,8 @@
 # Builds
 
 Biblioteca de builds con coste de equipamiento calculado contra los precios
-reales del mercado.
+reales del mercado. **Es la única fuente de builds del proyecto**: PvP Analytics
+y Roads of Avalon la citan (flujo «VIEW BUILDS»), nunca duplican builds.
 
 ## Modelo
 
@@ -25,6 +26,9 @@ reales del mercado.
   great nature solo, cursed group, holy group, dagger pair fame, bracers open
   world, dual swords mists, astral avalon, frost static, fire tracking,
   holy HCE).
+- `src/data/builds/avalon-{solo,roles,dps,escape,compositions}.ts` — builds de
+  Roads de Avalon (migradas desde `src/data/avalon/`, que ahora es solo un
+  façade de re-export). Sus imports internos apuntan a `@/data/builds/*`.
 
 Todos los ids usados existen en el dataset (`validate-builds` lo comprobó
 contra los 16 554 items). Peculiaridades del dataset a tener en cuenta:
@@ -35,6 +39,16 @@ contra los 16 554 items). Peculiaridades del dataset a tener en cuenta:
   existe; los slots de comida se muestran como texto).
 - Pociones disponibles: `T4_POTION_ENERGY`, `T4_POTION_HEAL`, `T4_POTION_COOLDOWN`.
 - Monturas disponibles: `T4_MOUNT_HORSE`, `T4_MOUNT_OX`, `T4_MOUNT_GIANTSTAG`.
+
+## Componentes (`src/components/builds/`)
+
+- `BuildsSection` — hub con 5 pestañas: Biblioteca, Composiciones, Comparar,
+  Recomendador y Coste de build. Recibe `provider`, `weaponFamily` (filtro
+  externo desde PvP/Avalon) y `onClearWeaponFilter`.
+- `BuildLibrary` — biblioteca con modos PvP / PvE / Avalon (chips de categoría
+  y filtro por familia de arma «Quitar filtro»).
+- `CompositionSection`, `BuildCompare`, `BuildRecommender`, `BuildCostOptimizer`,
+  `AvalonBuildsSection` (usada internamente en la biblioteca).
 
 ## Coste de equipamiento
 
@@ -50,3 +64,12 @@ contra los 16 554 items). Peculiaridades del dataset a tener en cuenta:
 
 `src/lib/builds/items.ts` — `itemName(itemId)`/`itemExists(itemId)` sobre el
 dataset para mostrar nombres en español.
+
+## Integración con PvP
+
+`src/lib/pvp/weapons.ts` — `buildWeaponFamily(build)` resuelve la familia de
+arma de un build del catálogo; `src/lib/pvp/builds.ts` — `bestBuildForFamily`
+y `buildsForFamily` buscan la mejor build del catálogo para una familia
+(prefieren modo PvP, orden estable). Los contadores PvP muestran la build
+recomendada con su coste real (`BuildCostPanel`) y un botón VIEW BUILDS que
+navega a la sección Builds con el filtro de familia aplicado (`onOpenBuilds`).

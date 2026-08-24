@@ -5,13 +5,16 @@ import { plannerSections, buildRoute } from "@/lib/avalon/planner";
 import type { PlannerOption, PlannerSection } from "@/lib/avalon/planner";
 import { ACTIVITY_LABELS } from "@/lib/builds/types";
 import { RISK_LEVEL_LABELS, RISK_LEVEL_STYLES } from "@/lib/avalon/risk";
-import type { PriceProvider } from "@/types/albion";
-import { AvalonBuildCard } from "@/components/avalon/AvalonBuildCard";
 import { resolveRecommendedBuilds } from "@/lib/avalon/bestMove";
+import { buildWeaponFamily } from "@/lib/pvp/weapons";
 
 const PLAYER_OPTIONS = [1, 2, 3, 5, 7];
 
-export function RoutePlanner({ provider }: { provider: PriceProvider }) {
+interface RoutePlannerProps {
+  onOpenBuilds: (weaponFamily?: string) => void;
+}
+
+export function RoutePlanner({ onOpenBuilds }: RoutePlannerProps) {
   const [players, setPlayers] = useState(3);
   const [tier, setTier] = useState(6);
   const [picked, setPicked] = useState<Record<string, PlannerOption["id"] | null>>({});
@@ -143,10 +146,22 @@ export function RoutePlanner({ provider }: { provider: PriceProvider }) {
             )}
 
             {recommendedBuilds.length > 0 && (
-              <div className="mt-4 grid gap-3 md:grid-cols-2">
-                {recommendedBuilds.map((b) => (
-                  <AvalonBuildCard key={b.id} provider={provider} build={b} />
-                ))}
+              <div className="mt-4 rounded-md bg-[var(--color-panel)] p-3">
+                <p className="text-[10px] uppercase tracking-wide text-[var(--color-text-dim)]">
+                  Recommended Builds (← fuente: Builds)
+                </p>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {recommendedBuilds.map((b) => (
+                    <button
+                      key={b.id}
+                      onClick={() => onOpenBuilds(buildWeaponFamily(b))}
+                      title="Ver build en la biblioteca de Builds"
+                      className="rounded-full border border-[var(--color-gold)]/30 bg-[var(--color-gold)]/5 px-3 py-1 text-xs text-[var(--color-gold)] transition-colors hover:bg-[var(--color-gold)]/15"
+                    >
+                      {b.name} →
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </>

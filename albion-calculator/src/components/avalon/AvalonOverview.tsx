@@ -1,56 +1,36 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { AVALON_BUILDS } from "@/data/avalon";
-import { AVALON_COMPOSITIONS } from "@/data/avalon/compositions";
 import { AVALON_ACTIVITIES, ACTIVITY_LABELS } from "@/lib/builds/types";
 import type { AvalonActivity } from "@/lib/builds/types";
 import { bestAvalonMove, resolveRecommendedBuilds } from "@/lib/avalon/bestMove";
 import { RISK_LEVEL_LABELS, RISK_LEVEL_STYLES } from "@/lib/avalon/risk";
+import { bestMountFor, mountsForActivity } from "@/lib/avalon/mounts";
 import { MOUNT_RECOMMENDATIONS } from "@/lib/avalon/mounts";
-import { bestMountFor } from "@/lib/avalon/mounts";
-import { mountsForActivity } from "@/lib/avalon/mounts";
-import type { PriceProvider } from "@/types/albion";
-import { AvalonBuildCard } from "@/components/avalon/AvalonBuildCard";
+import { buildWeaponFamily } from "@/lib/pvp/weapons";
 
 const PLAYER_OPTIONS = [1, 2, 3, 5, 7];
 
-export function AvalonOverview({ provider }: { provider: PriceProvider }) {
+interface AvalonOverviewProps {
+  onOpenBuilds: (weaponFamily?: string) => void;
+}
+
+export function AvalonOverview({ onOpenBuilds }: AvalonOverviewProps) {
   const [activity, setActivity] = useState<AvalonActivity>("pve");
   const [players, setPlayers] = useState(3);
   const [tier, setTier] = useState(6);
 
-  const stats = useMemo(
-    () => [
-      { label: "Builds en catálogo", value: AVALON_BUILDS.length },
-      { label: "Composiciones", value: AVALON_COMPOSITIONS.length },
-      { label: "Actividades", value: AVALON_ACTIVITIES.length },
-      { label: "Kinds de builds", value: 7 },
-    ],
-    []
+  const move = useMemo(() => bestAvalonMove(activity, players, tier), [activity, players, tier]);
+  const builds = useMemo(
+    () => (move ? resolveRecommendedBuilds(move.recommendedBuildIds) : []),
+    [move]
   );
-
-  const move = useMemo(
-    () => bestAvalonMove(activity, players, tier),
-    [activity, players, tier]
-  );
-
-  const builds = useMemo(() => (move ? resolveRecommendedBuilds(move.recommendedBuildIds) : []), [move]);
 
   const mount = bestMountFor(activity);
   const mounts = mountsForActivity(activity);
 
   return (
     <div className="space-y-5">
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((s) => (
-          <div key={s.label} className="rounded-lg border border-[var(--color-border)] bg-[var(--color-panel-raised)] p-4">
-            <p className="text-3xl font-semibold text-[var(--color-gold)]">{s.value}</p>
-            <p className="mt-1 text-xs uppercase tracking-wide text-[var(--color-text-dim)]">{s.label}</p>
-          </div>
-        ))}
-      </div>
-
       <section className="rounded-lg border border-[var(--color-border)] bg-[var(--color-panel-raised)] p-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-sm font-semibold text-[var(--color-text)]">Best Avalon Move</h2>
@@ -108,10 +88,23 @@ export function AvalonOverview({ provider }: { provider: PriceProvider }) {
               </span>
             </div>
             <p className="text-sm text-[var(--color-text-dim)]">{move.summary}</p>
-            <div className="grid gap-3 md:grid-cols-2">
-              {builds.map((b) => (
-                <AvalonBuildCard key={b.id} provider={provider} build={b} />
-              ))}
+
+            <div className="rounded-md bg-[var(--color-panel)] p-3">
+              <p className="text-[10px] uppercase tracking-wide text-[var(--color-text-dim)]">
+                Recommended Builds (← fuente: Builds)
+              </p>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {builds.map((b) => (
+                  <button
+                    key={b.id}
+                    onClick={() => onOpenBuilds(buildWeaponFamily(b))}
+                    title="Ver build en la biblioteca de Builds"
+                    className="rounded-full border border-[var(--color-gold)]/30 bg-[var(--color-gold)]/5 px-3 py-1 text-xs text-[var(--color-gold)] transition-colors hover:bg-[var(--color-gold)]/15"
+                  >
+                    {b.name} →
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         )}

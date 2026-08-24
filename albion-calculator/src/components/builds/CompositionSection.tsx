@@ -3,14 +3,14 @@
 import { useMemo, useState } from "react";
 import { DirectionAwareTabs } from "@/components/DirectionAwareTabs";
 import type { DirectionTab } from "@/components/DirectionAwareTabs";
-import { AVALON_COMPOSITIONS } from "@/data/avalon/compositions";
+import { AVALON_COMPOSITIONS } from "@/data/builds/avalon-compositions";
 import { COMPOSITION_KIND_LABELS } from "@/lib/avalon/compositions";
 import type { AvalonComposition, CompositionKind } from "@/lib/avalon/compositions";
 import { compositionMemberBuild, compositionItems } from "@/lib/avalon/compositions";
 import { DIFFICULTY_LABELS } from "@/lib/builds/types";
 import type { PriceProvider } from "@/types/albion";
 import { ItemIcon } from "@/components/ItemIcon";
-import { BuildCostPanel } from "@/components/avalon/BuildCostPanel";
+import { BuildCostPanel } from "@/components/builds/BuildCostPanel";
 import { buildItemId } from "@/lib/builds/types";
 import { itemName } from "@/lib/builds/items";
 

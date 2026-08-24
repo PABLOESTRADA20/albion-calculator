@@ -1,6 +1,6 @@
 import type { BuildItemSpec } from "@/lib/builds/types";
 import type { Build } from "@/lib/builds/types";
-import { item } from "@/data/avalon/solo";
+import { item } from "@/data/builds/avalon-solo";
 
 const roleBuild = (
   id: string,

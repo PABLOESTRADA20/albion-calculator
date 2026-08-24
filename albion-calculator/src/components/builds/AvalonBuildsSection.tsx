@@ -7,7 +7,7 @@ import { AVALON_BUILDS } from "@/data/avalon";
 import { avalonBuildsByKind } from "@/data/avalon";
 import { AVALON_BUILD_KINDS, AVALON_KIND_LABELS } from "@/lib/builds/types";
 import type { PriceProvider } from "@/types/albion";
-import { AvalonBuildCard } from "@/components/avalon/AvalonBuildCard";
+import { AvalonBuildCard } from "@/components/builds/AvalonBuildCard";
 
 interface AvalonBuildsSectionProps {
   provider: PriceProvider;
