@@ -38,6 +38,15 @@ function Dashboard({
       desc: "Players, matchups, counters, meta, fight history, rankings y live feed",
     },
   ];
+
+  const trackMouse = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    e.currentTarget.style.setProperty(
+      "--mx",
+      `${((e.clientX - rect.left) / rect.width) * 100}%`
+    );
+  }, []);
+
   return (
     <div className="space-y-5">
       <div className="grid gap-3 sm:grid-cols-2">
@@ -45,12 +54,19 @@ function Dashboard({
           <button
             key={m.id}
             onClick={() => onNavigate(m.id)}
-            className="group rounded-lg border border-[var(--color-border)] bg-[var(--color-panel)] p-4 text-left transition-colors hover:border-[var(--color-gold-dim)]"
+            onMouseMove={trackMouse}
+            className="module-card group rounded-lg border border-[var(--color-border)] bg-[var(--color-panel)] p-4 text-left backdrop-blur-md"
           >
-            <p className="text-sm font-semibold text-[var(--color-text)] group-hover:text-[var(--color-gold)]">
+            <span className="hud-corner left-1.5 top-1.5 border-l border-t" />
+            <span className="hud-corner right-1.5 top-1.5 border-r border-t" />
+            <span className="hud-corner bottom-1.5 left-1.5 border-b border-l" />
+            <span className="hud-corner bottom-1.5 right-1.5 border-b border-r" />
+            <p className="relative text-sm font-semibold tracking-wide text-[var(--color-text)] transition-colors group-hover:text-[var(--color-gold)] group-hover:drop-shadow-[0_0_10px_rgba(255,216,138,0.45)]">
               {m.title}
             </p>
-            <p className="mt-1 text-xs text-[var(--color-text-dim)]">{m.desc}</p>
+            <p className="relative mt-1 text-xs leading-relaxed text-[var(--color-text-dim)]">
+              {m.desc}
+            </p>
           </button>
         ))}
       </div>
@@ -127,27 +143,38 @@ export default function Home() {
 
   return (
     <main className="mx-auto min-h-screen max-w-4xl px-6 py-10">
-      <GridBeam
-        rows={3}
-        cols={5}
-        strength={0.5}
-        className="mb-8 rounded-lg border border-[var(--color-border)] bg-[var(--color-panel)]"
-      >
-        <header className="px-6 py-8">
-          <h1 className="text-gradient-gold text-3xl font-semibold tracking-tight">
-            Libro de Mercader
-          </h1>
-          <p className="mt-2 max-w-xl text-sm text-[var(--color-text-dim)]">
-            Inteligencia económica para Albion Online: compara precios entre
-            ciudades, calcula ganancias de crafteo, refinado y flipping, y
-            encuentra la mejor oportunidad disponible.
-          </p>
-          <div className="mt-5 flex flex-wrap items-center gap-3">
-            <ServerSelector value={serverId} onChange={setServerId} />
-            <PriceSourceToggle value={priceSource} onChange={setPriceSource} />
-          </div>
-        </header>
-      </GridBeam>
+      <div className="relative">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -inset-x-10 -top-16 h-56 animate-pulse rounded-full bg-[radial-gradient(50%_60%_at_50%_40%,rgba(34,211,238,0.14),transparent_70%),radial-gradient(38%_50%_at_18%_30%,rgba(255,216,138,0.1),transparent_70%),radial-gradient(38%_50%_at_82%_30%,rgba(96,165,250,0.12),transparent_70%)] blur-2xl"
+          style={{ animationDuration: "6s" }}
+        />
+        <GridBeam
+          rows={3}
+          cols={5}
+          strength={0.5}
+          className="mb-8 rounded-lg border border-[var(--color-border)] panel-glass"
+        >
+          <header className="px-6 py-8">
+            <p className="mb-3 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.35em] text-[var(--color-cyan)]/80">
+              <span className="inline-block size-1.5 animate-pulse rounded-full bg-[var(--color-cyan)] shadow-[0_0_8px_rgba(103,232,249,0.9)]" />
+              Terminal económica · Albion Online
+            </p>
+            <h1 className="text-gradient-gold text-4xl font-semibold tracking-tight">
+              Libro de Mercader
+            </h1>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-text-dim)]">
+              Inteligencia económica para Albion Online: compara precios entre
+              ciudades, calcula ganancias de crafteo, refinado y flipping, y
+              encuentra la mejor oportunidad disponible.
+            </p>
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <ServerSelector value={serverId} onChange={setServerId} />
+              <PriceSourceToggle value={priceSource} onChange={setPriceSource} />
+            </div>
+          </header>
+        </GridBeam>
+      </div>
 
       <DirectionAwareTabs
         tabs={sections}

@@ -8,9 +8,7 @@ interface PanelProps {
 
 export function Panel({ title, children, className = "" }: PanelProps) {
   return (
-    <div
-      className={`rounded-lg border border-[var(--color-border)] bg-[var(--color-panel)] p-5 shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_2px_6px_-2px_rgba(0,0,0,0.45),0_6px_18px_-6px_rgba(0,0,0,0.45),0_14px_32px_-12px_rgba(0,0,0,0.4)] ${className}`}
-    >
+    <div className={`panel-glass p-5 ${className}`}>
       {title && (
         <h2 className="mb-4 text-sm font-medium tracking-wide text-[var(--color-text)]">
           {title}
@@ -45,7 +43,7 @@ export function NumberField({
       <span className="mb-1 block text-xs text-[var(--color-text-dim)]">
         {label}
       </span>
-      <div className="flex items-center rounded-md border border-[var(--color-border)] bg-[var(--color-panel-raised)] focus-within:border-[var(--color-gold-dim)]">
+      <div className="glow-focus flex items-center rounded-md border border-[var(--color-border)] bg-[var(--color-panel-raised)] transition-shadow">
         <input
           type="number"
           value={Number.isFinite(value) ? value : ""}
@@ -96,7 +94,7 @@ export function SelectField<T extends string | number>({
             typeof value === "number" ? (Number(raw) as T) : (raw as T);
           onChange(next);
         }}
-        className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-panel-raised)] px-3 py-2 text-sm outline-none focus:border-[var(--color-gold-dim)] disabled:opacity-40"
+        className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-panel-raised)] px-3 py-2 text-sm outline-none transition-shadow focus-visible:border-[var(--color-gold)] disabled:opacity-40"
       >
         {options.map((o) => (
           <option key={String(o.value)} value={String(o.value)}>

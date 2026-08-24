@@ -75,7 +75,7 @@ export function DirectionAwareTabs({
             {isActive && (
               <motion.span
                 layoutId="tab-bubble"
-                className="absolute inset-0 z-10 rounded-full bg-[var(--color-gold)]"
+                className="absolute inset-0 z-10 rounded-full bg-gradient-to-b from-[#ffe9bd] via-[var(--color-gold)] to-[#d8a94f] shadow-[0_0_16px_rgba(255,216,138,0.55),0_0_34px_rgba(255,216,138,0.25)]"
                 transition={{ type: "spring", bounce: 0.19, duration: 0.4 }}
               />
             )}
@@ -89,7 +89,7 @@ export function DirectionAwareTabs({
 
   return (
     <div className={className}>
-      <div className="flex w-fit space-x-1 rounded-full bg-[var(--color-panel)] p-1">
+      <div className="panel-glass flex w-fit space-x-1 !rounded-full p-1">
         {tabButtons}
       </div>
       <MotionConfig transition={{ duration: 0.4, type: "spring", bounce: 0.2 }}>
