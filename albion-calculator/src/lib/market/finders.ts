@@ -262,7 +262,7 @@ export function scaleOpportunity(
     ...opp,
     quantity: q,
     grossProfit: Math.round(opp.grossProfit * q),
-    fees: Math.round((opp.sellPrice - netSell)),
+    fees: Math.round(opp.sellPrice * q - netSell),
     netProfit: Math.round(netSell - opp.buyPrice * q),
   };
 }

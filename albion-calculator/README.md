@@ -38,8 +38,10 @@ manualmente.
 
 ```bash
 pnpm lint            # ESLint
-pnpm build           # Next.js build (incluye type check de TS)
-pnpm exec tsc --noEmit   # Type check independiente (no hay script "typecheck")
+pnpm typecheck       # Type check de TypeScript
+pnpm test            # Tests unitarios (Vitest)
+pnpm test:watch      # Tests en modo watch
+pnpm build           # Next.js build
 ```
 
 ## Estructura
